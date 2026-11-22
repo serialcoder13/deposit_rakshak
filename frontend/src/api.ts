@@ -31,6 +31,8 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
   const token = getToken()
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    // Skips the ngrok browser-warning interstitial when the app is served via ngrok tunnel
+    'ngrok-skip-browser-warning': 'true',
     ...(options.headers as Record<string, string> ?? {}),
   }
   if (token) headers['Authorization'] = `Bearer ${token}`
@@ -270,7 +272,10 @@ export const api = {
     const token = getToken()
     return fetch(`/api/inspections/${inspectionId}/photos`, {
       method: 'POST',
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      headers: {
+        'ngrok-skip-browser-warning': 'true',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: formData,
     }).then(async (res) => {
       if (!res.ok) throw new Error(await res.text())

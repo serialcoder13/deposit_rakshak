@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Google Fonts already loaded via <link> in index.html ── */
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-page font-sans text-slate-900;
+    min-height: 100dvh;
+  }
+
+  /* Tabular numbers for all money / counters */
+  .font-display {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  /* Safe-area padding helpers for notched phones */
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pl-safe { padding-left: env(safe-area-inset-left); }
+  .pr-safe { padding-right: env(safe-area-inset-right); }
+  .px-safe {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  .py-safe {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+
+  /* Shimmer skeleton */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      #e2e8f0 25%,
+      #f1f5f9 50%,
+      #e2e8f0 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+/* ── Two decorative gradient blobs (fixed, behind everything) ── */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.12;
+}
+
+body::before {
+  /* Indigo blob — top left */
+  width: 480px;
+  height: 480px;
+  top: -120px;
+  left: -120px;
+  background: #4F46E5;
+}
+
+body::after {
+  /* Fuchsia blob — top right */
+  width: 400px;
+  height: 400px;
+  top: -80px;
+  right: -80px;
+  background: #D946EF;
+}
+
+/* Make sure all page content sits above the blobs */
+#root {
+  position: relative;
+  z-index: 1;
+}

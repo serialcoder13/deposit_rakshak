@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="50%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#D946EF"/>
+    </linearGradient>
+  </defs>
+  <!-- Shield shape -->
+  <path d="M50 6 L88 20 L88 50 C88 72 71 88 50 94 C29 88 12 72 12 50 L12 20 Z"
+        fill="url(#g)"/>
+  <!-- House inside the shield -->
+  <path d="M50 32 L34 46 L38 46 L38 62 L46 62 L46 54 L54 54 L54 62 L62 62 L62 46 L66 46 Z"
+        fill="white" opacity="0.92"/>
+  <!-- Roof ridge line -->
+  <path d="M50 32 L66 46" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+</svg>
