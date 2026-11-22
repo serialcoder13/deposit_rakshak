@@ -72,7 +72,7 @@ export function OtpInput({ value, onChange, onComplete, length = 6, disabled, er
             if (digits) setAt(0, digits)
           }}
           className={clsx(
-            'w-12 h-14 sm:w-13 text-center text-2xl font-display font-bold tabular-nums rounded-2xl border bg-white outline-none transition-all',
+            'w-12 h-14 text-center text-2xl font-display font-bold tabular-nums rounded-2xl border bg-white outline-none transition-all',
             'focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100',
             error ? 'border-rose-400 animate-shake' : value[i] ? 'border-slate-300' : 'border-slate-200',
           )}

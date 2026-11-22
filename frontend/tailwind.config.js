@@ -30,11 +30,28 @@ export default {
       animation: {
         shimmer: 'shimmer 1.5s infinite',
         'pulse-slow': 'pulse 2.5s cubic-bezier(0.4,0,0.6,1) infinite',
+        shake: 'shake 0.4s ease-in-out',
+        scan: 'scan 2.2s ease-in-out infinite',
+        float: 'float 4s ease-in-out infinite',
       },
       keyframes: {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        shake: {
+          '0%,100%': { transform: 'translateX(0)' },
+          '20%,60%': { transform: 'translateX(-6px)' },
+          '40%,80%': { transform: 'translateX(6px)' },
+        },
+        scan: {
+          '0%': { top: '0%' },
+          '50%': { top: '100%' },
+          '100%': { top: '0%' },
+        },
+        float: {
+          '0%,100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-6px)' },
         },
       },
     },

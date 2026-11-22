@@ -5,7 +5,7 @@ const fieldBox =
   'flex items-center bg-white border border-slate-200 rounded-2xl overflow-hidden transition-shadow ' +
   'focus-within:border-indigo-400 focus-within:ring-4 focus-within:ring-indigo-100'
 
-interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
+interface FieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix'> {
   label?: string
   hint?: ReactNode
   prefix?: ReactNode

@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "build:backend": "npm run build && cp -r dist ../backend/app/static"
+    "build:backend": "npm run build && rm -rf ../backend/app/static && cp -r dist ../backend/app/static"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.40.0",

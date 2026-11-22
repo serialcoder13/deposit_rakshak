@@ -420,4 +420,21 @@ export const api = {
     id: string,
     body: { status?: 'accepted' | 'disputed'; tenant_note?: string; owner_override_cost?: number; owner_note?: string },
   ) => request<{ id: string; status: FindingStatus; ok: boolean }>(`/api/findings/${id}`, json('PATCH', body)),
+
+  // Aliases used by older screens
+  getTenancy: (id: string) => request<TenancyDetail>(`/api/tenancies/${id}`),
+  getReport: (id: string) => request<Report>(`/api/tenancies/${id}/report`),
+  getInspection: (id: string) => request<InspectionDetail>(`/api/inspections/${id}`),
+  signInspection: (id: string) => request<SignResult>(`/api/inspections/${id}/sign`, json('POST')),
+  startCompare: (id: string) => request<{ run_id: string }>(`/api/tenancies/${id}/compare`, json('POST')),
+  createInspection: (id: string, type: InspectionType) =>
+    request<{ id: string; type: InspectionType; status: InspectionStatus; resumed: boolean }>(
+      `/api/tenancies/${id}/inspections`,
+      json('POST', { type }),
+    ),
+  fileIssue: (id: string, body: { description: string; category: MaintenanceCategory; slot_id?: string }) =>
+    request<unknown>(`/api/tenancies/${id}/issues`, json('POST', body)),
 }
+
+export type AgentStepEvent = AgentStep
+export type FindingOut = Finding
