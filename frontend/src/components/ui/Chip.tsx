@@ -7,66 +7,73 @@ import {
   ShieldCheck,
   Eye,
   CheckCircle2,
+  Lock,
+  PenLine,
+  Camera,
+  type LucideIcon,
 } from 'lucide-react'
-import type { FindingClassification } from '../../api'
+import type { FindingClassification, FindingStatus, InspectionStatus, Stage } from '../../api'
+import { STAGE_INFO, stageTone, type StageTone } from '../../lib/journey'
+
+export type ChipTone = StageTone
+
+const toneClasses: Record<ChipTone, string> = {
+  rose: 'bg-rose-50 text-rose-700 ring-rose-200/70',
+  slate: 'bg-slate-100 text-slate-600 ring-slate-200/70',
+  sky: 'bg-sky-50 text-sky-700 ring-sky-200/70',
+  violet: 'bg-violet-50 text-violet-700 ring-violet-200/70',
+  amber: 'bg-amber-50 text-amber-700 ring-amber-200/70',
+  emerald: 'bg-emerald-50 text-emerald-700 ring-emerald-200/70',
+  indigo: 'bg-indigo-50 text-indigo-700 ring-indigo-200/70',
+  teal: 'bg-teal-50 text-teal-700 ring-teal-200/70',
+}
 
 interface ChipProps {
   children: ReactNode
-  tone?: 'rose' | 'slate' | 'sky' | 'violet' | 'amber' | 'emerald' | 'indigo' | 'teal'
-  icon?: ReactNode
+  tone?: ChipTone
+  icon?: LucideIcon
   className?: string
+  pulse?: boolean
 }
 
-const toneClasses: Record<NonNullable<ChipProps['tone']>, string> = {
-  rose:    'bg-rose-100 text-rose-700',
-  slate:   'bg-slate-100 text-slate-600',
-  sky:     'bg-sky-100 text-sky-700',
-  violet:  'bg-violet-100 text-violet-700',
-  amber:   'bg-amber-100 text-amber-700',
-  emerald: 'bg-emerald-100 text-emerald-700',
-  indigo:  'bg-indigo-100 text-indigo-700',
-  teal:    'bg-teal-100 text-teal-700',
-}
-
-export function Chip({ children, tone = 'slate', icon, className }: ChipProps) {
+export function Chip({ children, tone = 'slate', icon: Icon, className, pulse }: ChipProps) {
   return (
     <span
       className={clsx(
-        'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold',
+        'inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-xs font-semibold ring-1 whitespace-nowrap',
         toneClasses[tone],
         className,
       )}
     >
-      {icon && <span className="w-3 h-3 shrink-0">{icon}</span>}
+      {pulse && (
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="absolute inline-flex h-full w-full rounded-full bg-current opacity-60 animate-ping" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-current" />
+        </span>
+      )}
+      {Icon && <Icon className="w-3.5 h-3.5 shrink-0" />}
       {children}
     </span>
   )
 }
 
-// ── Classification chip ───────────────────────────────────────────────────────
-
-type ClassConfig = {
-  tone: NonNullable<ChipProps['tone']>
-  icon: ReactNode
-  label: string
+const CLASSIFICATION: Record<FindingClassification | 'needs_review', { tone: ChipTone; icon: LucideIcon; label: string }> = {
+  damage: { tone: 'rose', icon: AlertTriangle, label: 'Damage' },
+  wear: { tone: 'slate', icon: Hourglass, label: 'Normal wear' },
+  pre_existing: { tone: 'sky', icon: History, label: 'Already there' },
+  owner_responsibility: { tone: 'violet', icon: ShieldCheck, label: "Owner's repair" },
+  none: { tone: 'emerald', icon: CheckCircle2, label: 'No change' },
+  needs_review: { tone: 'amber', icon: Eye, label: 'Needs review' },
 }
 
-const CLASSIFICATION_MAP: Record<FindingClassification | 'needs_review', ClassConfig> = {
-  damage:             { tone: 'rose',    icon: <AlertTriangle className="w-3 h-3" />, label: 'Damage' },
-  wear:               { tone: 'slate',   icon: <Hourglass className="w-3 h-3" />,     label: 'Normal wear' },
-  pre_existing:       { tone: 'sky',     icon: <History className="w-3 h-3" />,        label: 'Already there' },
-  owner_responsibility:{ tone: 'violet', icon: <ShieldCheck className="w-3 h-3" />,   label: "Owner's repair" },
-  none:               { tone: 'emerald', icon: <CheckCircle2 className="w-3 h-3" />,  label: 'No change' },
-  needs_review:       { tone: 'amber',   icon: <Eye className="w-3 h-3" />,            label: 'Needs review' },
-}
-
-interface ClassificationChipProps {
+export function ClassificationChip({
+  classification,
+  className,
+}: {
   classification: FindingClassification | 'needs_review'
   className?: string
-}
-
-export function ClassificationChip({ classification, className }: ClassificationChipProps) {
-  const cfg = CLASSIFICATION_MAP[classification] ?? CLASSIFICATION_MAP.none
+}) {
+  const cfg = CLASSIFICATION[classification] ?? CLASSIFICATION.none
   return (
     <Chip tone={cfg.tone} icon={cfg.icon} className={className}>
       {cfg.label}
@@ -74,22 +81,38 @@ export function ClassificationChip({ classification, className }: Classification
   )
 }
 
-// ── Status pill for inspections ───────────────────────────────────────────────
-
-import { Lock } from 'lucide-react'
-import type { InspectionStatus } from '../../api'
-
-const STATUS_MAP: Record<InspectionStatus, { tone: NonNullable<ChipProps['tone']>; label: string; icon?: ReactNode }> = {
-  draft:               { tone: 'slate',   label: 'Draft' },
-  awaiting_signatures: { tone: 'amber',   label: 'Awaiting signatures' },
-  locked:              { tone: 'emerald', label: 'Sealed', icon: <Lock className="w-3 h-3" /> },
+const INSPECTION: Record<InspectionStatus, { tone: ChipTone; label: string; icon: LucideIcon }> = {
+  draft: { tone: 'slate', label: 'In progress', icon: Camera },
+  awaiting_signatures: { tone: 'amber', label: 'Awaiting signatures', icon: PenLine },
+  locked: { tone: 'emerald', label: 'Sealed', icon: Lock },
 }
 
 export function StatusPill({ status }: { status: InspectionStatus }) {
-  const cfg = STATUS_MAP[status] ?? STATUS_MAP.draft
+  const cfg = INSPECTION[status] ?? INSPECTION.draft
   return (
     <Chip tone={cfg.tone} icon={cfg.icon}>
       {cfg.label}
     </Chip>
   )
+}
+
+export function StageChip({ stage }: { stage: Stage }) {
+  const live = stage === 'ai_check'
+  return (
+    <Chip tone={stageTone(stage)} pulse={live}>
+      {STAGE_INFO[stage]?.short ?? stage}
+    </Chip>
+  )
+}
+
+const FINDING_STATUS: Record<FindingStatus, { tone: ChipTone; label: string }> = {
+  proposed: { tone: 'slate', label: 'Awaiting tenant' },
+  needs_review: { tone: 'amber', label: 'Needs review' },
+  accepted: { tone: 'emerald', label: 'Accepted' },
+  disputed: { tone: 'amber', label: 'Disputed' },
+}
+
+export function FindingStatusChip({ status }: { status: FindingStatus }) {
+  const cfg = FINDING_STATUS[status] ?? FINDING_STATUS.proposed
+  return <Chip tone={cfg.tone}>{cfg.label}</Chip>
 }

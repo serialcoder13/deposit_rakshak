@@ -1,0 +1,760 @@
+{
+ "steps": [
+  {
+   "kind": "thought",
+   "label": "Starting the move-out check: 4 of 4 slots have both photos",
+   "tool_name": null,
+   "payload": {
+    "slots": 4,
+    "ready": 4
+   }
+  },
+  {
+   "kind": "thought",
+   "label": "I'll start by listing the capture slots.",
+   "tool_name": null,
+   "payload": {}
+  },
+  {
+   "kind": "tool_call",
+   "label": "Pairing move-in and move-out photos",
+   "tool_name": "list_pairs",
+   "payload": {}
+  },
+  {
+   "kind": "tool_result",
+   "label": "4 of 4 slots have both photos",
+   "tool_name": "list_pairs",
+   "payload": {
+    "pairs": [
+     {
+      "slot_id": "cad78231-0195-473c-bff3-a5f044e18027",
+      "label": "Wall A",
+      "room": "Hackathon Room",
+      "item_id": "6f8739ad-e7d4-4e38-847a-becb6dfcfa33",
+      "item_type": "wall",
+      "has_before": true,
+      "has_after": true
+     },
+     {
+      "slot_id": "ecfd1af5-e99b-4100-98ca-c4826a796029",
+      "label": "Table top",
+      "room": "Hackathon Room",
+      "item_id": "597f439d-5a79-4ca8-8fe1-2bb6f664fc17",
+      "item_type": "table",
+      "has_before": true,
+      "has_after": true
+     },
+     {
+      "slot_id": "7108a3f1-a3a5-4551-9667-5b671908d5a4",
+      "label": "Window wall",
+      "room": "Hackathon Room",
+      "item_id": "6f8739ad-e7d4-4e38-847a-becb6dfcfa33",
+      "item_type": "wall",
+      "has_before": true,
+      "has_after": true
+     },
+     {
+      "slot_id": "276aa254-f74f-423d-83ec-a7057a931643",
+      "label": "Sofa",
+      "room": "Hackathon Room",
+      "item_id": "22f3f2b3-9662-41ac-9569-ccb5387aa4c8",
+      "item_type": "cushion",
+      "has_before": true,
+      "has_after": true
+     }
+    ],
+    "tenancy_months": 10.8
+   }
+  },
+  {
+   "kind": "thought",
+   "label": "All four slots have both photos. Inspecting all of them now.",
+   "tool_name": null,
+   "payload": {}
+  },
+  {
+   "kind": "tool_call",
+   "label": "Inspecting Wall A",
+   "tool_name": "inspect_pair",
+   "payload": {
+    "slot_id": "cad78231-0195-473c-bff3-a5f044e18027"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Inspecting Table top",
+   "tool_name": "inspect_pair",
+   "payload": {
+    "slot_id": "ecfd1af5-e99b-4100-98ca-c4826a796029"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Inspecting Window wall",
+   "tool_name": "inspect_pair",
+   "payload": {
+    "slot_id": "7108a3f1-a3a5-4551-9667-5b671908d5a4"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Inspecting Sofa",
+   "tool_name": "inspect_pair",
+   "payload": {
+    "slot_id": "276aa254-f74f-423d-83ec-a7057a931643"
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Wall A: 1 change: crack (severity 2)",
+   "tool_name": "inspect_pair",
+   "payload": {
+    "slot_id": "cad78231-0195-473c-bff3-a5f044e18027",
+    "label": "Wall A",
+    "pair_usable": true,
+    "mismatch_reason": null,
+    "changes": [
+     {
+      "index": 0,
+      "change_type": "crack",
+      "region_description": "center-left of the wall, above the baseboard",
+      "size_estimate": "about 40 cm tall",
+      "is_normal_wear": false,
+      "severity": 2,
+      "confidence": 0.9,
+      "bbox_after": [
+       0.38,
+       0.12,
+       0.05,
+       0.42
+      ],
+      "reasoning": "A dark vertical crack is visible in the AFTER photo that is absent in the BEFORE photo."
+     }
+    ]
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Table top: 1 change: stain (severity 2)",
+   "tool_name": "inspect_pair",
+   "payload": {
+    "slot_id": "ecfd1af5-e99b-4100-98ca-c4826a796029",
+    "label": "Table top",
+    "pair_usable": true,
+    "mismatch_reason": null,
+    "changes": [
+     {
+      "index": 0,
+      "change_type": "stain",
+      "region_description": "center of the table top",
+      "size_estimate": "about 15 cm diameter",
+      "is_normal_wear": false,
+      "severity": 2,
+      "confidence": 0.9,
+      "bbox_after": [
+       0.49,
+       0.38,
+       0.14,
+       0.22
+      ],
+      "reasoning": "A dark circular ring stain is present in the AFTER photo that is absent in the BEFORE photo."
+     }
+    ]
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Window wall: 1 change: scuff (severity 2)",
+   "tool_name": "inspect_pair",
+   "payload": {
+    "slot_id": "7108a3f1-a3a5-4551-9667-5b671908d5a4",
+    "label": "Window wall",
+    "pair_usable": true,
+    "mismatch_reason": null,
+    "changes": [
+     {
+      "index": 0,
+      "change_type": "scuff",
+      "region_description": "lower-right of the window, on the wall above the skirting",
+      "size_estimate": "about 25 cm wide",
+      "is_normal_wear": false,
+      "severity": 2,
+      "confidence": 0.9,
+      "bbox_after": [
+       0.64,
+       0.55,
+       0.18,
+       0.28
+      ],
+      "reasoning": "A large scuff/mark is present on the wall below the window in the AFTER photo that is absent in BEFORE."
+     }
+    ]
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Sofa: 1 change: discoloration (severity 2)",
+   "tool_name": "inspect_pair",
+   "payload": {
+    "slot_id": "276aa254-f74f-423d-83ec-a7057a931643",
+    "label": "Sofa",
+    "pair_usable": true,
+    "mismatch_reason": null,
+    "changes": [
+     {
+      "index": 0,
+      "change_type": "discoloration",
+      "region_description": "entire sofa body, especially the front face and seat area",
+      "size_estimate": "covers the full visible sofa surface",
+      "is_normal_wear": false,
+      "severity": 2,
+      "confidence": 0.9,
+      "bbox_after": [
+       0.12,
+       0.38,
+       0.76,
+       0.48
+      ],
+      "reasoning": "The sofa's deep navy fabric with distinct cushion panels has faded to a lighter, washed-out blue and the cushion divisions are no longer visible, indicating significant discolouration beyond normal fading."
+     }
+    ]
+   }
+  },
+  {
+   "kind": "thought",
+   "label": "Changes in all four slots. Gathering notes, maintenance history, and item details.",
+   "tool_name": null,
+   "payload": {}
+  },
+  {
+   "kind": "tool_call",
+   "label": "Reading move-in notes for Wall A",
+   "tool_name": "get_slot_notes",
+   "payload": {
+    "slot_id": "cad78231-0195-473c-bff3-a5f044e18027"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Checking the tenant's issue reports for Wall A",
+   "tool_name": "get_maintenance_reports",
+   "payload": {
+    "slot_id": "cad78231-0195-473c-bff3-a5f044e18027"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Reading move-in notes for Table top",
+   "tool_name": "get_slot_notes",
+   "payload": {
+    "slot_id": "ecfd1af5-e99b-4100-98ca-c4826a796029"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Checking the tenant's issue reports for Table top",
+   "tool_name": "get_maintenance_reports",
+   "payload": {
+    "slot_id": "ecfd1af5-e99b-4100-98ca-c4826a796029"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Reading move-in notes for Window wall",
+   "tool_name": "get_slot_notes",
+   "payload": {
+    "slot_id": "7108a3f1-a3a5-4551-9667-5b671908d5a4"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Checking the tenant's issue reports for Window wall",
+   "tool_name": "get_maintenance_reports",
+   "payload": {
+    "slot_id": "7108a3f1-a3a5-4551-9667-5b671908d5a4"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Reading move-in notes for Sofa",
+   "tool_name": "get_slot_notes",
+   "payload": {
+    "slot_id": "276aa254-f74f-423d-83ec-a7057a931643"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Checking the tenant's issue reports for Sofa",
+   "tool_name": "get_maintenance_reports",
+   "payload": {
+    "slot_id": "276aa254-f74f-423d-83ec-a7057a931643"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Looking up the age and value of Sofa",
+   "tool_name": "get_item",
+   "payload": {
+    "slot_id": "276aa254-f74f-423d-83ec-a7057a931643"
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Looking up the age and value of Table top",
+   "tool_name": "get_item",
+   "payload": {
+    "slot_id": "ecfd1af5-e99b-4100-98ca-c4826a796029"
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Wall A: no move-in notes",
+   "tool_name": "get_slot_notes",
+   "payload": {
+    "slot_id": "cad78231-0195-473c-bff3-a5f044e18027",
+    "label": "Wall A",
+    "move_in_notes": []
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Wall A: tenant reported seepage on 2026-09-23",
+   "tool_name": "get_maintenance_reports",
+   "payload": {
+    "slot_id": "cad78231-0195-473c-bff3-a5f044e18027",
+    "label": "Wall A",
+    "reports": [
+     {
+      "report_id": "3e79bc14-6749-447e-944d-ff521d619c1d",
+      "category": "seepage",
+      "description": "Damp stain spreading near window, seepage from outside wall",
+      "reported_at": "2026-09-23T08:13:39.347442+00:00",
+      "same_slot": false
+     }
+    ]
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Table top: \"Small chip on the top-left corner already here\"",
+   "tool_name": "get_slot_notes",
+   "payload": {
+    "slot_id": "ecfd1af5-e99b-4100-98ca-c4826a796029",
+    "label": "Table top",
+    "move_in_notes": [
+     {
+      "note_id": "00161b76-2047-4df1-a72d-e3dedac8c6be",
+      "text": "Small chip on the top-left corner already here",
+      "author_role": "tenant",
+      "created_at": "2026-11-22T08:13:57.322491+00:00"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Table top: no issues reported",
+   "tool_name": "get_maintenance_reports",
+   "payload": {
+    "slot_id": "ecfd1af5-e99b-4100-98ca-c4826a796029",
+    "label": "Table top",
+    "reports": []
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Window wall: no move-in notes",
+   "tool_name": "get_slot_notes",
+   "payload": {
+    "slot_id": "7108a3f1-a3a5-4551-9667-5b671908d5a4",
+    "label": "Window wall",
+    "move_in_notes": []
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Window wall: tenant reported seepage on 2026-09-23",
+   "tool_name": "get_maintenance_reports",
+   "payload": {
+    "slot_id": "7108a3f1-a3a5-4551-9667-5b671908d5a4",
+    "label": "Window wall",
+    "reports": [
+     {
+      "report_id": "3e79bc14-6749-447e-944d-ff521d619c1d",
+      "category": "seepage",
+      "description": "Damp stain spreading near window, seepage from outside wall",
+      "reported_at": "2026-09-23T08:13:39.347442+00:00",
+      "same_slot": true
+     }
+    ]
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Sofa: no move-in notes",
+   "tool_name": "get_slot_notes",
+   "payload": {
+    "slot_id": "276aa254-f74f-423d-83ec-a7057a931643",
+    "label": "Sofa",
+    "move_in_notes": []
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Sofa: no issues reported",
+   "tool_name": "get_maintenance_reports",
+   "payload": {
+    "slot_id": "276aa254-f74f-423d-83ec-a7057a931643",
+    "label": "Sofa",
+    "reports": []
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "cushion: 2.9 yrs old, depreciation 0.2",
+   "tool_name": "get_item",
+   "payload": {
+    "item_id": "22f3f2b3-9662-41ac-9569-ccb5387aa4c8",
+    "type": "cushion",
+    "material": "fabric",
+    "age_years_at_move_in": 2.0,
+    "age_years_at_move_out": 2.9,
+    "useful_life_years": 3.0,
+    "replacement_cost": 1500.0,
+    "depreciation": 0.2
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "table: 6.9 yrs old, depreciation 0.31",
+   "tool_name": "get_item",
+   "payload": {
+    "item_id": "597f439d-5a79-4ca8-8fe1-2bb6f664fc17",
+    "type": "table",
+    "material": "wood",
+    "age_years_at_move_in": 6.0,
+    "age_years_at_move_out": 6.9,
+    "useful_life_years": 10.0,
+    "replacement_cost": 8000.0,
+    "depreciation": 0.31
+   }
+  },
+  {
+   "kind": "thought",
+   "label": "Evidence gathered. Pricing the chargeable changes.",
+   "tool_name": null,
+   "payload": {}
+  },
+  {
+   "kind": "tool_call",
+   "label": "Pricing the crack on Wall A",
+   "tool_name": "estimate_cost",
+   "payload": {
+    "slot_id": "cad78231-0195-473c-bff3-a5f044e18027",
+    "change_type": "crack",
+    "severity": 2,
+    "quantity": 1
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Pricing the stain on Table top",
+   "tool_name": "estimate_cost",
+   "payload": {
+    "slot_id": "ecfd1af5-e99b-4100-98ca-c4826a796029",
+    "change_type": "stain",
+    "severity": 2,
+    "quantity": 1
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Pricing the discoloration on Sofa",
+   "tool_name": "estimate_cost",
+   "payload": {
+    "slot_id": "276aa254-f74f-423d-83ec-a7057a931643",
+    "change_type": "discoloration",
+    "severity": 2,
+    "quantity": 1
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Wall A: ₹1,600 (Replacement value ₹20,000 × 40% (severity 2) × depreciation 0.20)",
+   "tool_name": "estimate_cost",
+   "payload": {
+    "slot_id": "cad78231-0195-473c-bff3-a5f044e18027",
+    "label": "Wall A",
+    "basis": "replacement_value",
+    "rate_inr": 0.0,
+    "quantity": 1.0,
+    "depreciation": 0.2,
+    "cost": 1600.0,
+    "explanation": "Replacement value ₹20,000 × 40% (severity 2) × depreciation 0.20"
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Table top: ₹992 (Replacement value ₹8,000 × 40% (severity 2) × depreciation 0.31)",
+   "tool_name": "estimate_cost",
+   "payload": {
+    "slot_id": "ecfd1af5-e99b-4100-98ca-c4826a796029",
+    "label": "Table top",
+    "basis": "replacement_value",
+    "rate_inr": 0.0,
+    "quantity": 1.0,
+    "depreciation": 0.31,
+    "cost": 992.0,
+    "explanation": "Replacement value ₹8,000 × 40% (severity 2) × depreciation 0.31"
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Sofa: ₹120 (Replacement value ₹1,500 × 40% (severity 2) × depreciation 0.20)",
+   "tool_name": "estimate_cost",
+   "payload": {
+    "slot_id": "276aa254-f74f-423d-83ec-a7057a931643",
+    "label": "Sofa",
+    "basis": "replacement_value",
+    "rate_inr": 0.0,
+    "quantity": 1.0,
+    "depreciation": 0.2,
+    "cost": 120.0,
+    "explanation": "Replacement value ₹1,500 × 40% (severity 2) × depreciation 0.20"
+   }
+  },
+  {
+   "kind": "thought",
+   "label": "Recording the four findings.",
+   "tool_name": null,
+   "payload": {}
+  },
+  {
+   "kind": "tool_call",
+   "label": "Recording: Damage on Wall A",
+   "tool_name": "record_finding",
+   "payload": {
+    "slot_id": "cad78231-0195-473c-bff3-a5f044e18027",
+    "change_index": 0,
+    "change_type": "crack",
+    "classification": "damage",
+    "severity": 2,
+    "confidence": 0.9,
+    "quantity": 1,
+    "region_description": "center-left of Wall A, above the baseboard, about 40 cm tall",
+    "reasoning": "A dark vertical crack appears in the move-out photo and is absent at move-in. No move-in note covers it, and the tenant's seepage report was filed for the window wall, not this slot, so it is new damage.",
+    "cited_evidence": []
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Recording: Damage on Table top",
+   "tool_name": "record_finding",
+   "payload": {
+    "slot_id": "ecfd1af5-e99b-4100-98ca-c4826a796029",
+    "change_index": 0,
+    "change_type": "stain",
+    "classification": "damage",
+    "severity": 2,
+    "confidence": 0.9,
+    "quantity": 1,
+    "region_description": "center of the table top, dark circular ring about 15 cm across",
+    "reasoning": "A new dark ring stain is visible at move-out and absent at move-in. The move-in note only records a chip on the top-left corner, which does not explain this stain, and no maintenance report exists for the table.",
+    "cited_evidence": [
+     "00161b76-2047-4df1-a72d-e3dedac8c6be"
+    ]
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Recording: Owner's repair on Window wall",
+   "tool_name": "record_finding",
+   "payload": {
+    "slot_id": "7108a3f1-a3a5-4551-9667-5b671908d5a4",
+    "change_index": 0,
+    "change_type": "scuff",
+    "classification": "owner_responsibility",
+    "severity": 2,
+    "confidence": 0.9,
+    "quantity": 1,
+    "region_description": "lower-right of the window wall, above the skirting, about 25 cm wide",
+    "reasoning": "The tenant reported seepage from the outside wall near this window during the tenancy, a plausible cause for the wall marking below the window. The owner bears this, so the tenant is not charged.",
+    "cited_evidence": [
+     "3e79bc14-6749-447e-944d-ff521d619c1d"
+    ]
+   }
+  },
+  {
+   "kind": "tool_call",
+   "label": "Recording: Normal wear on Sofa",
+   "tool_name": "record_finding",
+   "payload": {
+    "slot_id": "276aa254-f74f-423d-83ec-a7057a931643",
+    "change_index": 0,
+    "change_type": "discoloration",
+    "classification": "wear",
+    "severity": 2,
+    "confidence": 0.9,
+    "quantity": 1,
+    "region_description": "entire sofa body, front face and seat area",
+    "reasoning": "The fabric sofa was already 2 years old at move-in and is 2.9 years into a 3-year useful life after a 10.8-month tenancy, so overall fading of the fabric is consistent with age and normal use rather than damage.",
+    "cited_evidence": []
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Wall A: Damage, ₹1,600",
+   "tool_name": "record_finding",
+   "payload": {
+    "finding_id": "d6267201-19e1-4fe0-a437-c5dff7f933d0",
+    "label": "Wall A",
+    "classification": "damage",
+    "status": "proposed",
+    "charged_inr": 1600.0,
+    "cost_basis": "replacement_value",
+    "cited": []
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Table top: Damage, ₹992",
+   "tool_name": "record_finding",
+   "payload": {
+    "finding_id": "cda74679-86a8-43d7-8e02-74d5183f52b9",
+    "label": "Table top",
+    "classification": "damage",
+    "status": "proposed",
+    "charged_inr": 992.0,
+    "cost_basis": "replacement_value",
+    "cited": [
+     "00161b76-2047-4df1-a72d-e3dedac8c6be"
+    ]
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Window wall: Owner's repair, ₹0",
+   "tool_name": "record_finding",
+   "payload": {
+    "finding_id": "3813bae3-b84c-4656-9eea-55b66e027a2f",
+    "label": "Window wall",
+    "classification": "owner_responsibility",
+    "status": "proposed",
+    "charged_inr": 0.0,
+    "cost_basis": "not_charged",
+    "cited": [
+     "3e79bc14-6749-447e-944d-ff521d619c1d"
+    ]
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "Sofa: Normal wear, ₹0",
+   "tool_name": "record_finding",
+   "payload": {
+    "finding_id": "e72cc61e-a2c5-4311-bc63-417dc10f3dd1",
+    "label": "Sofa",
+    "classification": "wear",
+    "status": "proposed",
+    "charged_inr": 0.0,
+    "cost_basis": "not_charged",
+    "cited": []
+   }
+  },
+  {
+   "kind": "thought",
+   "label": "All findings recorded. Closing the inspection.",
+   "tool_name": null,
+   "payload": {}
+  },
+  {
+   "kind": "tool_call",
+   "label": "Writing the summary",
+   "tool_name": "finish",
+   "payload": {
+    "summary_en": "All four slots were compared and the photos lined up. Two new changes are charged to the tenant: a vertical crack on Wall A and a ring stain on the table top; the chip noted at move-in was not charged. The marking on the window wall is the owner's responsibility because of the seepage the tenant reported, and the sofa's fading is normal wear for a nearly three-year-old fabric sofa, so neither is charged.",
+    "summary_kn": "ಎಲ್ಲಾ ನಾಲ್ಕು ಸ್ಲಾಟ್‌ಗಳ ಫೋಟೋಗಳನ್ನು ಹೋಲಿಸಲಾಗಿದೆ ಮತ್ತು ಫೋಟೋಗಳು ಸರಿಯಾಗಿ ಹೊಂದಿಕೆಯಾಗಿವೆ. ಎರಡು ಹೊಸ ಬದಲಾವಣೆಗಳನ್ನು ಬಾಡಿಗೆದಾರರಿಗೆ ಚಾರ್ಜ್ ಮಾಡಲಾಗಿದೆ: ವಾಲ್ A ಮೇಲಿನ ಲಂಬ ಬಿರುಕು ಮತ್ತು ಮೇಜಿನ ಮೇಲ್ಮೈಯಲ್ಲಿನ ವೃತ್ತಾಕಾರದ ಕಲೆ; ಪ್ರವೇಶದ ಸಮಯದಲ್ಲಿ ದಾಖಲಿಸಿದ ಚಿಪ್‌ಗೆ ಚಾರ್ಜ್ ಮಾಡಿಲ್ಲ. ಕಿಟಕಿ ಗೋಡೆಯ ಮೇಲಿನ ಗುರುತು ಬಾಡಿಗೆದಾರರು ವರದಿ ಮಾಡಿದ ಸೋರಿಕೆಯಿಂದ ಉಂಟಾದುದರಿಂದ ಮಾಲೀಕರ ಜವಾಬ್ದಾರಿ, ಮತ್ತು ಸೋಫಾದ ಬಣ್ಣ ಮಾಸುವಿಕೆ ಸುಮಾರು ಮೂರು ವರ್ಷ ಹಳೆಯ ಬಟ್ಟೆಯ ಸೋಫಾಗೆ ಸಹಜವಾದ ಸವೆತ, ಆದ್ದರಿಂದ ಇವೆರಡಕ್ಕೂ ಚಾರ್ಜ್ ಇಲ್ಲ."
+   }
+  },
+  {
+   "kind": "tool_result",
+   "label": "4 findings. Proposed deduction ₹2,592",
+   "tool_name": "finish",
+   "payload": {
+    "done": true,
+    "findings": 4,
+    "proposed_inr": 2592.0,
+    "refund_if_accepted_inr": 147408.0
+   }
+  }
+ ],
+ "findings": [
+  {
+   "slot_label": "Wall A",
+   "change_type": "crack",
+   "classification": "damage",
+   "severity": 2,
+   "confidence": 0.9,
+   "region_description": "center-left of Wall A, above the baseboard, about 40 cm tall",
+   "reasoning": "A dark vertical crack appears in the move-out photo and is absent at move-in. No move-in note covers it, and the tenant's seepage report was filed for the window wall, not this slot, so it is new damage.",
+   "quantity": 1.0,
+   "rate_inr": 0.0,
+   "cost_basis": "replacement_value",
+   "bbox_after": "[0.38, 0.12, 0.05, 0.42]",
+   "depreciation_factor": 0.2,
+   "est_cost": 1600.0,
+   "status": "proposed"
+  },
+  {
+   "slot_label": "Table top",
+   "change_type": "stain",
+   "classification": "damage",
+   "severity": 2,
+   "confidence": 0.9,
+   "region_description": "center of the table top, dark circular ring about 15 cm across",
+   "reasoning": "A new dark ring stain is visible at move-out and absent at move-in. The move-in note only records a chip on the top-left corner, which does not explain this stain, and no maintenance report exists for the table.",
+   "quantity": 1.0,
+   "rate_inr": 0.0,
+   "cost_basis": "replacement_value",
+   "bbox_after": "[0.49, 0.38, 0.14, 0.22]",
+   "depreciation_factor": 0.31,
+   "est_cost": 992.0,
+   "status": "proposed"
+  },
+  {
+   "slot_label": "Window wall",
+   "change_type": "scuff",
+   "classification": "owner_responsibility",
+   "severity": 2,
+   "confidence": 0.9,
+   "region_description": "lower-right of the window wall, above the skirting, about 25 cm wide",
+   "reasoning": "The tenant reported seepage from the outside wall near this window during the tenancy, a plausible cause for the wall marking below the window. The owner bears this, so the tenant is not charged.",
+   "quantity": 1.0,
+   "rate_inr": 0.0,
+   "cost_basis": "not_charged",
+   "bbox_after": "[0.64, 0.55, 0.18, 0.28]",
+   "depreciation_factor": 1.0,
+   "est_cost": 0.0,
+   "status": "proposed"
+  },
+  {
+   "slot_label": "Sofa",
+   "change_type": "discoloration",
+   "classification": "wear",
+   "severity": 2,
+   "confidence": 0.9,
+   "region_description": "entire sofa body, front face and seat area",
+   "reasoning": "The fabric sofa was already 2 years old at move-in and is 2.9 years into a 3-year useful life after a 10.8-month tenancy, so overall fading of the fabric is consistent with age and normal use rather than damage.",
+   "quantity": 1.0,
+   "rate_inr": 0.0,
+   "cost_basis": "not_charged",
+   "bbox_after": "[0.12, 0.38, 0.76, 0.48]",
+   "depreciation_factor": 1.0,
+   "est_cost": 0.0,
+   "status": "proposed"
+  }
+ ],
+ "summary_en": "All four slots were compared and the photos lined up. Two new changes are charged to the tenant: a vertical crack on Wall A and a ring stain on the table top; the chip noted at move-in was not charged. The marking on the window wall is the owner's responsibility because of the seepage the tenant reported, and the sofa's fading is normal wear for a nearly three-year-old fabric sofa, so neither is charged. Deposit ₹1,50,000. Proposed deduction ₹2,592. Refund due if accepted: ₹1,47,408.",
+ "summary_kn": "ಎಲ್ಲಾ ನಾಲ್ಕು ಸ್ಲಾಟ್‌ಗಳ ಫೋಟೋಗಳನ್ನು ಹೋಲಿಸಲಾಗಿದೆ ಮತ್ತು ಫೋಟೋಗಳು ಸರಿಯಾಗಿ ಹೊಂದಿಕೆಯಾಗಿವೆ. ಎರಡು ಹೊಸ ಬದಲಾವಣೆಗಳನ್ನು ಬಾಡಿಗೆದಾರರಿಗೆ ಚಾರ್ಜ್ ಮಾಡಲಾಗಿದೆ: ವಾಲ್ A ಮೇಲಿನ ಲಂಬ ಬಿರುಕು ಮತ್ತು ಮೇಜಿನ ಮೇಲ್ಮೈಯಲ್ಲಿನ ವೃತ್ತಾಕಾರದ ಕಲೆ; ಪ್ರವೇಶದ ಸಮಯದಲ್ಲಿ ದಾಖಲಿಸಿದ ಚಿಪ್‌ಗೆ ಚಾರ್ಜ್ ಮಾಡಿಲ್ಲ. ಕಿಟಕಿ ಗೋಡೆಯ ಮೇಲಿನ ಗುರುತು ಬಾಡಿಗೆದಾರರು ವರದಿ ಮಾಡಿದ ಸೋರಿಕೆಯಿಂದ ಉಂಟಾದುದರಿಂದ ಮಾಲೀಕರ ಜವಾಬ್ದಾರಿ, ಮತ್ತು ಸೋಫಾದ ಬಣ್ಣ ಮಾಸುವಿಕೆ ಸುಮಾರು ಮೂರು ವರ್ಷ ಹಳೆಯ ಬಟ್ಟೆಯ ಸೋಫಾಗೆ ಸಹಜವಾದ ಸವೆತ, ಆದ್ದರಿಂದ ಇವೆರಡಕ್ಕೂ ಚಾರ್ಜ್ ಇಲ್ಲ. ಠೇವಣಿ ₹1,50,000. ಪ್ರಸ್ತಾವಿತ ಕಡಿತ ₹2,592. ಒಪ್ಪಿದರೆ ಹಿಂತಿರುಗಿಸಬೇಕಾದ ಮೊತ್ತ ₹1,47,408."
+}
