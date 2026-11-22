@@ -38,7 +38,7 @@ Rules:
 
 ## Phase 0 (everyone, 10 min)
 
-**T1 Tunnel + camera check (QA):** run any page on port 8000, expose it with `cloudflared tunnel --url http://localhost:8000`, and open it on both phones. Confirm HTTPS works.
+**T1 Tunnel + camera check (QA):** claim the free static domain in the ngrok dashboard, run any page on port 8000, expose it with `ngrok http --url=<your-static-domain>.ngrok-free.app 8000`, and open it on both phones. Tap "Visit Site" on the warning page and confirm HTTPS works.
 **T2 Golden photos (QA):** shoot 5 before/after pairs in the venue (stain, crack, wear, unchanged, mismatched angle) and save them to `backend/tests/golden/`.
 **T3 Rate card (Product):** fill the checked rates and sources into SPEC §10.
 **A0 Provider check (AI):** confirm one image call works with the chosen provider and key.
@@ -189,7 +189,10 @@ Read SPEC §11 and ARCHITECTURE §2 and §6.
 Create frontend/ with Vite + React + TypeScript, vite-plugin-pwa (name
 "Deposit Rakshak", theme colour, icons, standalone), React Router and React Query.
 The Vite dev server proxies /api to http://localhost:8000. Create src/api.ts
-with a typed fetch wrapper and a stored JWT. Build the Login screen (phone,
+with a typed fetch wrapper and a stored JWT; every request also sends the
+header "ngrok-skip-browser-warning: true". In vite-plugin-pwa set
+workbox.navigateFallbackDenylist: [/^\/api/] so /api is never cached.
+Build the Login screen (phone,
 OTP, hint "use 123456"). Mobile-first CSS, large tap targets.
 Add an npm script that builds and copies dist/ to ../backend/app/static.
 ```

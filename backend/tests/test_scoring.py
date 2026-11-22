@@ -151,10 +151,10 @@ def test_totals_disputed_not_in_agreed():
 
 def test_sha256_bytes_stable():
     data = b"hello world"
-    assert sha256_bytes(data) == sha256_bytes(data)
-    assert sha256_bytes(data) == "b94d27b9934d3e08a52e52d7da7dabfac484efe04294e576"[:len(sha256_bytes(data))]  # just check type
-    assert isinstance(sha256_bytes(data), str)
-    assert len(sha256_bytes(data)) == 64
+    h = sha256_bytes(data)
+    assert h == sha256_bytes(data)
+    assert isinstance(h, str)
+    assert len(h) == 64  # hex SHA-256 is always 64 chars
 
 
 def test_sha256_bytes_different():

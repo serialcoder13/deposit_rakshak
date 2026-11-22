@@ -96,7 +96,7 @@ Payments, real SMS, legal advice, video walkthroughs, OpenCV alignment.
 - **Thin API, async agent.** `POST /compare` returns a `run_id` immediately. The agent runs in a background task and writes `AgentStep` rows. The UI follows them over Server-Sent Events (SSE).
 - **No queue or broker** for the hackathon. FastAPI `BackgroundTasks` is enough. A real deployment would move to Celery or RQ with Postgres and S3.
 - **One LLM adapter module** (`llm.py`) holds the provider call, so the team can switch providers (watsonx, Claude or another) in one place.
-- **HTTPS is required for the camera on phones.** Expose the laptop with a tunnel (cloudflared or ngrok) and test this in the first 15 minutes.
+- **HTTPS is required for the camera on phones.** Hosting is the laptop only, exposed by ngrok's free static domain (ARCHITECTURE §6). Test it in the first 15 minutes.
 
 ---
 

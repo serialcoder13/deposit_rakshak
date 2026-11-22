@@ -161,13 +161,20 @@ disputed --(owner override or tenant accepts)--> accepted
 
 ## 6. Deployment (hackathon)
 
+**Decision:** everything runs on the laptop, exposed by ngrok on its free static domain. There's no cloud hosting.
+
 ```
 laptop
  ├─ backend:  uvicorn app.main:app --host 0.0.0.0 --port 8000
- ├─ frontend: npm run build  -> copied to backend/app/static (served at /)
- └─ tunnel:   cloudflared tunnel --url http://localhost:8000   -> https://<random>.trycloudflare.com
-phones open the tunnel URL, then "Add to Home Screen"
+ ├─ frontend: npm run build:backend  -> copied to backend/app/static (served at /)
+ └─ tunnel:   ngrok http --url=<your-static-domain>.ngrok-free.app 8000
+phones open https://<your-static-domain>.ngrok-free.app, then "Add to Home Screen"
 ```
+
+- **The static domain never changes**, so the installed PWA keeps working across restarts.
+- **ngrok's free-plan warning page:** the first visit in a browser shows a "You are about to visit" page. Tap **Visit Site** once on each phone. The API wrapper (`api.ts`) also sends the header `ngrok-skip-browser-warning: true` on every request.
+- **The service worker must not cache `/api`.** In vite-plugin-pwa, set `workbox.navigateFallbackDenylist: [/^\/api/]`.
+- **Laptop:** plugged in, sleep off, and the lid open (on macOS, closing the lid sleeps the laptop). Keep a phone hotspot ready if the venue Wi-Fi drops.
 
 **Environment variables** (`backend/.env`, never committed):
 | Var | Purpose |
