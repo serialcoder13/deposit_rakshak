@@ -69,7 +69,7 @@
   },
   {
    "kind": "thought",
-   "label": "All four slots have both photos. Inspecting all of them now.",
+   "label": "All four slots have both photos. Inspecting all in one turn.",
    "tool_name": null,
    "payload": {}
   },
@@ -118,8 +118,8 @@
      {
       "index": 0,
       "change_type": "crack",
-      "region_description": "center-left of the wall, above the baseboard",
-      "size_estimate": "about 30 cm tall",
+      "region_description": "center-left of the wall, running vertically from upper-middle toward the lower-middle",
+      "size_estimate": "about 60 cm long",
       "is_normal_wear": false,
       "severity": 2,
       "confidence": 0.9,
@@ -148,7 +148,7 @@
       "index": 0,
       "change_type": "stain",
       "region_description": "center of the table top",
-      "size_estimate": "about 15 cm diameter ring",
+      "size_estimate": "about 15 cm diameter",
       "is_normal_wear": false,
       "severity": 2,
       "confidence": 0.9,
@@ -156,9 +156,9 @@
        0.49,
        0.38,
        0.14,
-       0.24
+       0.22
       ],
-      "reasoning": "A dark circular ring stain is present in the AFTER photo that is absent from the BEFORE photo."
+      "reasoning": "A dark ring-shaped stain is present in the AFTER photo that is absent from the BEFORE photo."
      }
     ]
    }
@@ -176,25 +176,25 @@
      {
       "index": 0,
       "change_type": "scuff",
-      "region_description": "lower-right of the window, on the wall below the sill",
+      "region_description": "lower-right of the window wall, below and to the right of the window sill",
       "size_estimate": "about 25 cm wide",
       "is_normal_wear": false,
       "severity": 2,
       "confidence": 0.9,
       "bbox_after": [
        0.64,
-       0.57,
-       0.19,
+       0.55,
+       0.18,
        0.25
       ],
-      "reasoning": "A cluster of brown scuff marks is present on the wall below the window in the AFTER photo but absent in BEFORE."
+      "reasoning": "A cluster of jagged scuff marks is present on the wall in the AFTER photo that is absent in the BEFORE photo."
      }
     ]
    }
   },
   {
    "kind": "tool_result",
-   "label": "Sofa: 2 changes: discoloration (severity 1), missing (severity 2)",
+   "label": "Sofa: 1 change: discoloration (severity 2)",
    "tool_name": "inspect_pair",
    "payload": {
     "slot_id": "276aa254-f74f-423d-83ec-a7057a931643",
@@ -205,41 +205,25 @@
      {
       "index": 0,
       "change_type": "discoloration",
-      "region_description": "entire sofa body, especially the front face and backrest",
-      "size_estimate": "full width of the sofa, about 1.5 m",
-      "is_normal_wear": true,
-      "severity": 1,
+      "region_description": "entire sofa backrest and seat area, most visible across the central and lower portion of the sofa",
+      "size_estimate": "covers the full width of the sofa, roughly 1.5 m wide",
+      "is_normal_wear": false,
+      "severity": 2,
       "confidence": 0.9,
       "bbox_after": [
        0.12,
-       0.38,
-       0.76,
-       0.5
+       0.42,
+       0.75,
+       0.45
       ],
-      "reasoning": "The sofa's fabric has faded from a deep navy to a lighter, washed-out blue compared with BEFORE, consistent with age and use."
-     },
-     {
-      "index": 1,
-      "change_type": "missing",
-      "region_description": "front face of the sofa where three seat cushions were visible",
-      "size_estimate": "three cushion panels, each about 40 cm wide",
-      "is_normal_wear": false,
-      "severity": 2,
-      "confidence": 0.85,
-      "bbox_after": [
-       0.14,
-       0.5,
-       0.72,
-       0.25
-      ],
-      "reasoning": "The three distinct seat cushion panels visible in BEFORE are no longer present or distinguishable in AFTER, leaving a flat front face."
+      "reasoning": "The sofa fabric has faded from a deep navy blue with distinct cushion panels to a lighter, washed-out blue with the cushion divisions no longer visible, indicating significant discolouration or fading beyond normal wear."
      }
     ]
    }
   },
   {
    "kind": "thought",
-   "label": "Changes found in all four slots. Gathering notes, maintenance history, and item details.",
+   "label": "Four changes seen. Gathering notes, reports and item details for all slots.",
    "tool_name": null,
    "payload": {}
   },
@@ -458,7 +442,7 @@
   },
   {
    "kind": "thought",
-   "label": "Now pricing the chargeable damage items.",
+   "label": "Now pricing the three chargeable changes.",
    "tool_name": null,
    "payload": {}
   },
@@ -486,13 +470,13 @@
   },
   {
    "kind": "tool_call",
-   "label": "Pricing the missing on Sofa",
+   "label": "Pricing the discoloration on Sofa",
    "tool_name": "estimate_cost",
    "payload": {
     "slot_id": "276aa254-f74f-423d-83ec-a7057a931643",
-    "change_type": "missing",
+    "change_type": "discoloration",
     "severity": 2,
-    "quantity": 3
+    "quantity": 1
    }
   },
   {
@@ -558,8 +542,8 @@
     "severity": 2,
     "confidence": 0.9,
     "quantity": 1,
-    "region_description": "center-left of Wall A, above the baseboard, about 30 cm tall",
-    "reasoning": "A dark vertical crack appears in the move-out photo and is absent at move-in. No move-in note covers it, and the tenant's seepage report was filed for the window wall, not this slot.",
+    "region_description": "center-left of Wall A, vertical crack about 60 cm long",
+    "reasoning": "A new vertical crack appears in the move-out photo and is absent at move-in. No move-in note covers it, and the tenant's seepage report was filed for the window wall, not this slot, so it is not explained by rule 1 or 2.",
     "cited_evidence": []
    }
   },
@@ -575,8 +559,8 @@
     "severity": 2,
     "confidence": 0.9,
     "quantity": 1,
-    "region_description": "center of the table top, ring stain about 15 cm diameter",
-    "reasoning": "A new dark ring stain is visible at move-out and absent at move-in. The only move-in note refers to a corner chip, not this stain, and no maintenance report exists for this slot.",
+    "region_description": "center of the table top, ring-shaped stain about 15 cm across",
+    "reasoning": "A new dark ring stain is visible at move-out and absent at move-in. The only move-in note concerns a corner chip, which is a different defect, and no maintenance report exists for this slot.",
     "cited_evidence": [
      "00161b76-2047-4df1-a72d-e3dedac8c6be"
     ]
@@ -594,8 +578,8 @@
     "severity": 2,
     "confidence": 0.9,
     "quantity": 1,
-    "region_description": "lower-right of the window wall, below the sill, about 25 cm wide",
-    "reasoning": "The tenant reported damp staining and seepage from the outside wall near this window during the tenancy; the marking below the sill is consistent with that reported seepage, so it is not charged to the tenant.",
+    "region_description": "lower-right of the window wall, below and right of the window sill, about 25 cm wide",
+    "reasoning": "The tenant reported seepage from the outside wall near this window during the tenancy, which plausibly explains the surface deterioration on this wall. The tenant is not charged.",
     "cited_evidence": [
      "3e79bc14-6749-447e-944d-ff521d619c1d"
     ]
@@ -610,28 +594,11 @@
     "change_index": 0,
     "change_type": "discoloration",
     "classification": "wear",
-    "severity": 1,
+    "severity": 2,
     "confidence": 0.9,
     "quantity": 1,
-    "region_description": "entire sofa body, front face and backrest",
-    "reasoning": "The fabric has faded from deep navy to a lighter blue, consistent with the item's age (2.9 years of a 3-year useful life) and a 10.8-month tenancy. Normal wear, not charged.",
-    "cited_evidence": []
-   }
-  },
-  {
-   "kind": "tool_call",
-   "label": "Recording: Damage on Sofa",
-   "tool_name": "record_finding",
-   "payload": {
-    "slot_id": "276aa254-f74f-423d-83ec-a7057a931643",
-    "change_index": 1,
-    "change_type": "missing",
-    "classification": "damage",
-    "severity": 2,
-    "confidence": 0.85,
-    "quantity": 3,
-    "region_description": "front face of the sofa where three seat cushion panels were visible",
-    "reasoning": "Three distinct seat cushion panels visible at move-in are no longer present or distinguishable at move-out, leaving a flat front face. No move-in note or maintenance report explains this.",
+    "region_description": "full backrest and seat of the sofa, roughly 1.5 m wide",
+    "reasoning": "The fabric is 2.9 years old against a 3-year useful life, so overall fading over a 10.8-month tenancy is consistent with age and normal use rather than a new physical defect. Not charged.",
     "cited_evidence": []
    }
   },
@@ -640,7 +607,7 @@
    "label": "Wall A: Damage, ₹1,600",
    "tool_name": "record_finding",
    "payload": {
-    "finding_id": "63848937-a68e-4c77-a03d-e3ab59bed230",
+    "finding_id": "9e8f886e-ad52-4f0f-b967-bef8d2777a26",
     "label": "Wall A",
     "classification": "damage",
     "status": "proposed",
@@ -654,7 +621,7 @@
    "label": "Table top: Damage, ₹992",
    "tool_name": "record_finding",
    "payload": {
-    "finding_id": "567963e3-a1c5-43ed-ac57-8b844f72ac19",
+    "finding_id": "aad45a40-b1e7-4bc3-810f-2484adae5032",
     "label": "Table top",
     "classification": "damage",
     "status": "proposed",
@@ -670,7 +637,7 @@
    "label": "Window wall: Owner's repair, ₹0",
    "tool_name": "record_finding",
    "payload": {
-    "finding_id": "00af0641-432b-4875-b512-cc91dec80e29",
+    "finding_id": "7a3b6913-6424-4330-ac53-db727a8a24ce",
     "label": "Window wall",
     "classification": "owner_responsibility",
     "status": "proposed",
@@ -686,7 +653,7 @@
    "label": "Sofa: Normal wear, ₹0",
    "tool_name": "record_finding",
    "payload": {
-    "finding_id": "3e4b5f37-7232-4e6d-8274-3760fdd9925e",
+    "finding_id": "ab8422b0-6f43-4cec-bd36-58410cc192f6",
     "label": "Sofa",
     "classification": "wear",
     "status": "proposed",
@@ -696,37 +663,23 @@
    }
   },
   {
-   "kind": "tool_result",
-   "label": "Sofa: Damage, ₹120",
-   "tool_name": "record_finding",
-   "payload": {
-    "finding_id": "7bb513d4-808b-45db-b8b6-ac6daab90d85",
-    "label": "Sofa",
-    "classification": "damage",
-    "status": "proposed",
-    "charged_inr": 120.0,
-    "cost_basis": "replacement_value",
-    "cited": []
-   }
-  },
-  {
    "kind": "tool_call",
    "label": "Writing the summary",
    "tool_name": "finish",
    "payload": {
-    "summary_en": "All four slots were compared and the photos lined up. Two new items are charged as damage: a vertical crack on Wall A and a ring stain on the table top; the sofa's missing seat cushion panels are also recorded as damage. The scuffing below the window is treated as owner responsibility because of the tenant's earlier seepage report, and the sofa's overall fading is normal wear, so neither is charged.",
-    "summary_kn": "ಎಲ್ಲಾ ನಾಲ್ಕು ಸ್ಥಳಗಳ ಫೋಟೋಗಳನ್ನು ಹೋಲಿಸಲಾಗಿದೆ ಮತ್ತು ಫೋಟೋಗಳು ಸರಿಯಾಗಿ ಹೊಂದಿಕೆಯಾಗಿವೆ. ಹೊಸದಾಗಿ ಕಂಡ ಎರಡು ವಿಷಯಗಳನ್ನು ಹಾನಿಯೆಂದು ಪರಿಗಣಿಸಲಾಗಿದೆ: ವಾಲ್ A ಮೇಲಿನ ಲಂಬ ಬಿರುಕು ಮತ್ತು ಮೇಜಿನ ಮೇಲ್ಮೈಯಲ್ಲಿನ ವೃತ್ತಾಕಾರದ ಕಲೆ; ಸೋಫಾದ ಸೀಟ್ ಕುಶನ್ ಭಾಗಗಳು ಕಾಣೆಯಾಗಿರುವುದನ್ನೂ ಹಾನಿಯೆಂದು ದಾಖಲಿಸಲಾಗಿದೆ. ಕಿಟಕಿಯ ಕೆಳಗಿನ ಗುರುತುಗಳನ್ನು ಮಾಲೀಕರ ಜವಾಬ್ದಾರಿ ಎಂದು ಪರಿಗಣಿಸಲಾಗಿದೆ, ಏಕೆಂದರೆ ಬಾಡಿಗೆದಾರರು ಹಿಂದೆ ಸೋರಿಕೆಯ ಬಗ್ಗೆ ದೂರು ನೀಡಿದ್ದರು; ಸೋಫಾದ ಬಣ್ಣ ಮಾಸಿರುವುದು ಸಾಮಾನ್ಯ ಸವೆತವಾಗಿದೆ. ಆದ್ದರಿಂದ ಈ ಎರಡಕ್ಕೂ ಶುಲ್ಕ ವಿಧಿಸಲಾಗಿಲ್ಲ."
+    "summary_en": "All four slots were compared and the photos lined up. Two new defects are charged to the tenant: a vertical crack on Wall A and a ring stain on the table top. The scuffing on the window wall is treated as the owner's responsibility because of the seepage the tenant reported, and the sofa fading is normal wear for its age, so neither is charged.",
+    "summary_kn": "ಎಲ್ಲಾ ನಾಲ್ಕು ಸ್ಲಾಟ್‌ಗಳ ಫೋಟೋಗಳನ್ನು ಹೋಲಿಸಲಾಗಿದೆ ಮತ್ತು ಫೋಟೋಗಳು ಸರಿಯಾಗಿ ಹೊಂದಿಕೆಯಾಗಿವೆ. ಎರಡು ಹೊಸ ಹಾನಿಗಳನ್ನು ಬಾಡಿಗೆದಾರರಿಗೆ ಲೆಕ್ಕಹಾಕಲಾಗಿದೆ: ವಾಲ್ A ಮೇಲಿನ ಲಂಬ ಬಿರುಕು ಮತ್ತು ಮೇಜಿನ ಮೇಲ್ಮೈಯಲ್ಲಿನ ವೃತ್ತಾಕಾರದ ಕಲೆ. ಕಿಟಕಿ ಗೋಡೆಯ ಮೇಲಿನ ಗೀರುಗಳು ಬಾಡಿಗೆದಾರರು ಮೊದಲೇ ವರದಿ ಮಾಡಿದ ನೀರು ಸೋರಿಕೆಯಿಂದ ಉಂಟಾಗಿರುವುದರಿಂದ ಮಾಲೀಕರ ಜವಾಬ್ದಾರಿ ಎಂದು ಪರಿಗಣಿಸಲಾಗಿದೆ, ಮತ್ತು ಸೋಫಾದ ಬಣ್ಣ ಮಾಸುವಿಕೆ ಅದರ ವಯಸ್ಸಿಗೆ ಸಹಜವಾದ ಸವೆತವಾಗಿದೆ; ಈ ಎರಡಕ್ಕೂ ಶುಲ್ಕ ವಿಧಿಸಿಲ್ಲ."
    }
   },
   {
    "kind": "tool_result",
-   "label": "5 findings. Proposed deduction ₹2,712",
+   "label": "4 findings. Proposed deduction ₹2,592",
    "tool_name": "finish",
    "payload": {
     "done": true,
-    "findings": 5,
-    "proposed_inr": 2712.0,
-    "refund_if_accepted_inr": 147288.0
+    "findings": 4,
+    "proposed_inr": 2592.0,
+    "refund_if_accepted_inr": 147408.0
    }
   }
  ],
@@ -737,8 +690,8 @@
    "classification": "damage",
    "severity": 2,
    "confidence": 0.9,
-   "region_description": "center-left of Wall A, above the baseboard, about 30 cm tall",
-   "reasoning": "A dark vertical crack appears in the move-out photo and is absent at move-in. No move-in note covers it, and the tenant's seepage report was filed for the window wall, not this slot.",
+   "region_description": "center-left of Wall A, vertical crack about 60 cm long",
+   "reasoning": "A new vertical crack appears in the move-out photo and is absent at move-in. No move-in note covers it, and the tenant's seepage report was filed for the window wall, not this slot, so it is not explained by rule 1 or 2.",
    "quantity": 1.0,
    "rate_inr": 0.0,
    "cost_basis": "replacement_value",
@@ -753,12 +706,12 @@
    "classification": "damage",
    "severity": 2,
    "confidence": 0.9,
-   "region_description": "center of the table top, ring stain about 15 cm diameter",
-   "reasoning": "A new dark ring stain is visible at move-out and absent at move-in. The only move-in note refers to a corner chip, not this stain, and no maintenance report exists for this slot.",
+   "region_description": "center of the table top, ring-shaped stain about 15 cm across",
+   "reasoning": "A new dark ring stain is visible at move-out and absent at move-in. The only move-in note concerns a corner chip, which is a different defect, and no maintenance report exists for this slot.",
    "quantity": 1.0,
    "rate_inr": 0.0,
    "cost_basis": "replacement_value",
-   "bbox_after": "[0.49, 0.38, 0.14, 0.24]",
+   "bbox_after": "[0.49, 0.38, 0.14, 0.22]",
    "depreciation_factor": 0.31,
    "est_cost": 992.0,
    "status": "proposed"
@@ -769,12 +722,12 @@
    "classification": "owner_responsibility",
    "severity": 2,
    "confidence": 0.9,
-   "region_description": "lower-right of the window wall, below the sill, about 25 cm wide",
-   "reasoning": "The tenant reported damp staining and seepage from the outside wall near this window during the tenancy; the marking below the sill is consistent with that reported seepage, so it is not charged to the tenant.",
+   "region_description": "lower-right of the window wall, below and right of the window sill, about 25 cm wide",
+   "reasoning": "The tenant reported seepage from the outside wall near this window during the tenancy, which plausibly explains the surface deterioration on this wall. The tenant is not charged.",
    "quantity": 1.0,
    "rate_inr": 0.0,
    "cost_basis": "not_charged",
-   "bbox_after": "[0.64, 0.57, 0.19, 0.25]",
+   "bbox_after": "[0.64, 0.55, 0.18, 0.25]",
    "depreciation_factor": 1.0,
    "est_cost": 0.0,
    "status": "proposed"
@@ -783,35 +736,19 @@
    "slot_label": "Sofa",
    "change_type": "discoloration",
    "classification": "wear",
-   "severity": 1,
+   "severity": 2,
    "confidence": 0.9,
-   "region_description": "entire sofa body, front face and backrest",
-   "reasoning": "The fabric has faded from deep navy to a lighter blue, consistent with the item's age (2.9 years of a 3-year useful life) and a 10.8-month tenancy. Normal wear, not charged.",
+   "region_description": "full backrest and seat of the sofa, roughly 1.5 m wide",
+   "reasoning": "The fabric is 2.9 years old against a 3-year useful life, so overall fading over a 10.8-month tenancy is consistent with age and normal use rather than a new physical defect. Not charged.",
    "quantity": 1.0,
    "rate_inr": 0.0,
    "cost_basis": "not_charged",
-   "bbox_after": "[0.12, 0.38, 0.76, 0.5]",
+   "bbox_after": "[0.12, 0.42, 0.75, 0.45]",
    "depreciation_factor": 1.0,
    "est_cost": 0.0,
    "status": "proposed"
-  },
-  {
-   "slot_label": "Sofa",
-   "change_type": "missing",
-   "classification": "damage",
-   "severity": 2,
-   "confidence": 0.85,
-   "region_description": "front face of the sofa where three seat cushion panels were visible",
-   "reasoning": "Three distinct seat cushion panels visible at move-in are no longer present or distinguishable at move-out, leaving a flat front face. No move-in note or maintenance report explains this.",
-   "quantity": 1.0,
-   "rate_inr": 0.0,
-   "cost_basis": "replacement_value",
-   "bbox_after": "[0.14, 0.5, 0.72, 0.25]",
-   "depreciation_factor": 0.2,
-   "est_cost": 120.0,
-   "status": "proposed"
   }
  ],
- "summary_en": "All four slots were compared and the photos lined up. Two new items are charged as damage: a vertical crack on Wall A and a ring stain on the table top; the sofa's missing seat cushion panels are also recorded as damage. The scuffing below the window is treated as owner responsibility because of the tenant's earlier seepage report, and the sofa's overall fading is normal wear, so neither is charged. Deposit ₹1,50,000. Proposed deduction ₹2,712. Refund due if accepted: ₹1,47,288.",
- "summary_kn": "ಎಲ್ಲಾ ನಾಲ್ಕು ಸ್ಥಳಗಳ ಫೋಟೋಗಳನ್ನು ಹೋಲಿಸಲಾಗಿದೆ ಮತ್ತು ಫೋಟೋಗಳು ಸರಿಯಾಗಿ ಹೊಂದಿಕೆಯಾಗಿವೆ. ಹೊಸದಾಗಿ ಕಂಡ ಎರಡು ವಿಷಯಗಳನ್ನು ಹಾನಿಯೆಂದು ಪರಿಗಣಿಸಲಾಗಿದೆ: ವಾಲ್ A ಮೇಲಿನ ಲಂಬ ಬಿರುಕು ಮತ್ತು ಮೇಜಿನ ಮೇಲ್ಮೈಯಲ್ಲಿನ ವೃತ್ತಾಕಾರದ ಕಲೆ; ಸೋಫಾದ ಸೀಟ್ ಕುಶನ್ ಭಾಗಗಳು ಕಾಣೆಯಾಗಿರುವುದನ್ನೂ ಹಾನಿಯೆಂದು ದಾಖಲಿಸಲಾಗಿದೆ. ಕಿಟಕಿಯ ಕೆಳಗಿನ ಗುರುತುಗಳನ್ನು ಮಾಲೀಕರ ಜವಾಬ್ದಾರಿ ಎಂದು ಪರಿಗಣಿಸಲಾಗಿದೆ, ಏಕೆಂದರೆ ಬಾಡಿಗೆದಾರರು ಹಿಂದೆ ಸೋರಿಕೆಯ ಬಗ್ಗೆ ದೂರು ನೀಡಿದ್ದರು; ಸೋಫಾದ ಬಣ್ಣ ಮಾಸಿರುವುದು ಸಾಮಾನ್ಯ ಸವೆತವಾಗಿದೆ. ಆದ್ದರಿಂದ ಈ ಎರಡಕ್ಕೂ ಶುಲ್ಕ ವಿಧಿಸಲಾಗಿಲ್ಲ. ಠೇವಣಿ ₹1,50,000. ಪ್ರಸ್ತಾವಿತ ಕಡಿತ ₹2,712. ಒಪ್ಪಿದರೆ ಹಿಂತಿರುಗಿಸಬೇಕಾದ ಮೊತ್ತ ₹1,47,288."
+ "summary_en": "All four slots were compared and the photos lined up. Two new defects are charged to the tenant: a vertical crack on Wall A and a ring stain on the table top. The scuffing on the window wall is treated as the owner's responsibility because of the seepage the tenant reported, and the sofa fading is normal wear for its age, so neither is charged. Deposit ₹1,50,000. Proposed deduction ₹2,592. Refund due if accepted: ₹1,47,408.",
+ "summary_kn": "ಎಲ್ಲಾ ನಾಲ್ಕು ಸ್ಲಾಟ್‌ಗಳ ಫೋಟೋಗಳನ್ನು ಹೋಲಿಸಲಾಗಿದೆ ಮತ್ತು ಫೋಟೋಗಳು ಸರಿಯಾಗಿ ಹೊಂದಿಕೆಯಾಗಿವೆ. ಎರಡು ಹೊಸ ಹಾನಿಗಳನ್ನು ಬಾಡಿಗೆದಾರರಿಗೆ ಲೆಕ್ಕಹಾಕಲಾಗಿದೆ: ವಾಲ್ A ಮೇಲಿನ ಲಂಬ ಬಿರುಕು ಮತ್ತು ಮೇಜಿನ ಮೇಲ್ಮೈಯಲ್ಲಿನ ವೃತ್ತಾಕಾರದ ಕಲೆ. ಕಿಟಕಿ ಗೋಡೆಯ ಮೇಲಿನ ಗೀರುಗಳು ಬಾಡಿಗೆದಾರರು ಮೊದಲೇ ವರದಿ ಮಾಡಿದ ನೀರು ಸೋರಿಕೆಯಿಂದ ಉಂಟಾಗಿರುವುದರಿಂದ ಮಾಲೀಕರ ಜವಾಬ್ದಾರಿ ಎಂದು ಪರಿಗಣಿಸಲಾಗಿದೆ, ಮತ್ತು ಸೋಫಾದ ಬಣ್ಣ ಮಾಸುವಿಕೆ ಅದರ ವಯಸ್ಸಿಗೆ ಸಹಜವಾದ ಸವೆತವಾಗಿದೆ; ಈ ಎರಡಕ್ಕೂ ಶುಲ್ಕ ವಿಧಿಸಿಲ್ಲ. ಠೇವಣಿ ₹1,50,000. ಪ್ರಸ್ತಾವಿತ ಕಡಿತ ₹2,592. ಒಪ್ಪಿದರೆ ಹಿಂತಿರುಗಿಸಬೇಕಾದ ಮೊತ್ತ ₹1,47,408."
 }
