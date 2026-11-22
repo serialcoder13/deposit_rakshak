@@ -29,7 +29,7 @@ export default function AgentRunPage() {
 
     // Use EventSource; auth header not supported by EventSource API — append token as query param
     // The backend should accept ?token= as a fallback (implement in task A3 if needed)
-    const es = new EventSource(`/api/runs/${runId}/events`, {})
+    const es = new EventSource(url)
 
     es.onmessage = (e: MessageEvent) => {
       try {

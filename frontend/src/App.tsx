@@ -8,6 +8,7 @@ import ReviewSignPage from './pages/ReviewSignPage'
 import AgentRunPage from './pages/AgentRunPage'
 import ReportPage from './pages/ReportPage'
 import SettlementPage from './pages/SettlementPage'
+import AddPropertyPage from './pages/AddPropertyPage'
 import { OfflineBanner } from './components/ui'
 import { getToken } from './api'
 
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/welcome" element={authed(<WelcomePage />)} />
         <Route path="/" element={authed(<HomePage />)} />
+        <Route path="/properties/new" element={authed(<AddPropertyPage />)} />
         <Route path="/tenancies/:tenancyId" element={authed(<TenancyPage />)} />
         <Route path="/tenancies/:tenancyId/report" element={authed(<ReportPage />)} />
         <Route path="/tenancies/:tenancyId/settlement" element={authed(<SettlementPage />)} />
