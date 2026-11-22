@@ -37,7 +37,7 @@ export default function TenancyPage() {
         <div style={styles.card}>
           <Row label="Deposit" value={`₹${data.deposit.toLocaleString()}`} />
           <Row label="Monthly rent" value={`₹${data.monthly_rent.toLocaleString()}`} />
-          <Row label="Start date" value={data.start_date} />
+          <Row label="Start date" value={data.start_date ?? ""} />
           <Row label="Invite code" value={data.invite_code} />
         </div>
 
