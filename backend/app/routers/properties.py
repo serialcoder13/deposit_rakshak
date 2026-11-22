@@ -2,19 +2,23 @@
 routers/properties.py — GET/POST /api/properties, GET /api/properties/{id}
 (SPEC §7 Property and setup)
 
-MVP uses seed data; create/update UI is stretch.
+Also: GET /api/properties/presets, POST /api/properties (from a preset),
+POST /api/properties/{id}/tenancies (invite a tenant by phone).
 """
 from __future__ import annotations
 
-from typing import List
+from datetime import date
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlmodel import Session, select
 
 from app.auth import get_current_user
 from app.db import get_session
-from app.models import CaptureSlot, Item, Property, Room, User
+from app.models import CaptureSlot, InviteStatus, Item, Property, Room, Tenancy, User
+from app.templates import PRESETS, create_property_from_preset, preset_preview
+from app.util import ev, normalise_phone, now_iso
 
 router = APIRouter(prefix="/api/properties", tags=["properties"])
 
@@ -59,9 +63,111 @@ class PropertyDetailOut(PropertyOut):
     rooms: List[RoomOut]
 
 
+class PropertyCreate(BaseModel):
+    address: str = Field(min_length=3)
+    city: str = "Bengaluru"
+    preset: str = "1BHK"
+    item_age_years: float = Field(default=3, ge=0, le=50)
+
+
+class TenancyCreate(BaseModel):
+    tenant_phone: str
+    tenant_name: Optional[str] = None
+    deposit: float = Field(gt=0)
+    monthly_rent: float = Field(gt=0)
+    start_date: Optional[str] = None  # ISO date, defaults to today
+
+
+class TenancyCreated(BaseModel):
+    tenancy_id: str
+    property_id: str
+    tenant_phone: str
+    invite_status: str
+    invite_code: str
+    tenant_already_registered: bool
+
+
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
+
+@router.get("/presets")
+def list_presets():
+    """Layout presets for the property wizard, with the rooms and slots each creates."""
+    return preset_preview()
+
+
+@router.post("", response_model=PropertyDetailOut)
+def create_property(
+    body: PropertyCreate,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    """Create a property from a preset. The caller becomes the owner."""
+    if body.preset not in PRESETS:
+        raise HTTPException(status_code=422, detail=f"preset must be one of {list(PRESETS)}")
+    prop = create_property_from_preset(
+        session, current_user.id, body.address, body.city, body.preset, body.item_age_years
+    )
+    session.commit()
+    return get_property(prop.id, current_user, session)
+
+
+@router.post("/{property_id}/tenancies", response_model=TenancyCreated)
+def invite_tenant(
+    property_id: str,
+    body: TenancyCreate,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    """Owner invites a tenant by phone. The tenancy stays pending until the tenant accepts."""
+    prop = session.get(Property, property_id)
+    if prop is None:
+        raise HTTPException(status_code=404, detail="Property not found")
+    if prop.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the owner can invite a tenant")
+
+    phone = normalise_phone(body.tenant_phone)
+    if phone == current_user.phone:
+        raise HTTPException(status_code=422, detail="You cannot invite your own number")
+
+    open_tenancies = [
+        t for t in session.exec(select(Tenancy).where(Tenancy.property_id == property_id)).all()
+        if not t.end_date
+    ]
+    if open_tenancies:
+        raise HTTPException(status_code=409, detail="This property already has an active or pending tenancy")
+
+    start = body.start_date or date.today().isoformat()
+    try:
+        date.fromisoformat(start[:10])
+    except ValueError:
+        raise HTTPException(status_code=422, detail="start_date must be YYYY-MM-DD")
+
+    tenancy = Tenancy(
+        property_id=prop.id,
+        owner_id=current_user.id,
+        tenant_phone=phone,
+        tenant_name=(body.tenant_name or "").strip(),
+        invite_status=InviteStatus.pending,
+        created_at=now_iso(),
+        start_date=start[:10],
+        deposit=body.deposit,
+        monthly_rent=body.monthly_rent,
+    )
+    session.add(tenancy)
+    session.commit()
+    session.refresh(tenancy)
+    existing = session.exec(select(User).where(User.phone == phone)).first()
+    return TenancyCreated(
+        tenancy_id=tenancy.id,
+        property_id=prop.id,
+        tenant_phone=phone,
+        invite_status=ev(tenancy.invite_status),
+        invite_code=tenancy.invite_code,
+        tenant_already_registered=existing is not None,
+    )
+
 
 @router.get("", response_model=List[PropertyOut])
 def list_properties(
@@ -84,7 +190,11 @@ def get_property(
     if prop is None:
         raise HTTPException(status_code=404, detail="Property not found")
     if prop.owner_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not your property")
+        is_tenant = session.exec(
+            select(Tenancy).where(Tenancy.property_id == prop.id, Tenancy.tenant_id == current_user.id)
+        ).first()
+        if is_tenant is None:
+            raise HTTPException(status_code=403, detail="Not your property")
 
     rooms = session.exec(select(Room).where(Room.property_id == prop.id)).all()
     rooms_out: List[RoomOut] = []

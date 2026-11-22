@@ -12,7 +12,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -72,9 +73,21 @@ PHOTOS_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/api/photos", StaticFiles(directory=str(PHOTOS_DIR)), name="photos")
 
 # ---------------------------------------------------------------------------
-# Static: built PWA at / (must come last)
+# Static: built PWA at /, with SPA fallback so deep links survive a refresh.
+# Checked per request, so `npm run build:backend` works without a restart.
 # ---------------------------------------------------------------------------
 
-STATIC_DIR = Path(__file__).parent / "static"
-if STATIC_DIR.exists():
-    app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="spa")
+STATIC_DIR = (Path(__file__).parent / "static").resolve()
+
+
+@app.get("/{full_path:path}", include_in_schema=False)
+def spa(full_path: str):
+    if full_path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="Not found")
+    index = STATIC_DIR / "index.html"
+    if not index.exists():
+        raise HTTPException(status_code=404, detail="Frontend not built. Run: cd frontend && npm run build:backend")
+    candidate = (STATIC_DIR / full_path).resolve()
+    if full_path and candidate.is_file() and STATIC_DIR in candidate.parents:
+        return FileResponse(str(candidate))
+    return FileResponse(str(index), headers={"Cache-Control": "no-cache"})

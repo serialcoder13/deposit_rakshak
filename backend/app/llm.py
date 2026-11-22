@@ -1,29 +1,20 @@
 """
-llm.py — DeepSeek LLM provider adapter (SPEC §8, ARCHITECTURE ADR 7).
+llm.py: the ONLY module that talks to the LLM provider (SPEC §8, ARCHITECTURE ADR 7).
 
-DeepSeek exposes an OpenAI-compatible REST API, so we use httpx directly
-(no SDK dependency) and keep everything in this one file.
+Provider: DeepSeek (OpenAI-compatible chat completions, accepts image_url parts).
+Thinking is switched off: deepseek-flash reasons by default, which is slow and can
+return an empty answer for short JSON.
 
 Public API
-----------
-async vision_compare(before_bytes, after_bytes, context) -> dict
-    Sends a before/after image pair with the vision contract (SPEC §9).
-    Returns validated JSON. Retries once on invalid JSON.
-
-async chat_with_tools(messages, tools, system) -> dict
-    Sends a tool-use chat request and returns a normalised response:
-    {"text": str | None, "tool_calls": [{"id", "name", "arguments"}], "stop": str}
-
-Env vars used (via app.config.settings)
-    LLM_API_KEY         DeepSeek API key
-    LLM_MODEL           Chat model, default "deepseek-chat"
-    LLM_VISION_MODEL    Vision model, default "deepseek-chat"
-    LLM_API_URL         Base URL, default "https://api.deepseek.com"
+    async vision_compare(before_bytes, after_bytes, context) -> dict
+    async chat_with_tools(messages, tools, system) -> dict
+        {"text", "tool_calls": [{"id","name","arguments"}], "stop", "raw_message"}
 """
 from __future__ import annotations
 
 import base64
 import json
+import re
 from typing import Any, Dict, List
 
 import httpx
@@ -31,48 +22,59 @@ import httpx
 from app.config import settings
 
 _BASE = settings.llm_api_url.rstrip("/")
-_HEADERS = {
-    "Authorization": f"Bearer {settings.llm_api_key}",
-    "Content-Type": "application/json",
-}
+_URL = f"{_BASE}/chat/completions"
+_HEADERS = {"Authorization": f"Bearer {settings.llm_api_key}", "Content-Type": "application/json"}
+
+
+def _provider_extras() -> Dict[str, Any]:
+    return {"thinking": {"type": "disabled"}} if settings.llm_provider == "deepseek" else {}
 
 
 def _image_data_url(image_bytes: bytes) -> str:
-    """Encode raw JPEG bytes as a base64 data URL."""
-    b64 = base64.b64encode(image_bytes).decode()
-    return f"data:image/jpeg;base64,{b64}"
+    return "data:image/jpeg;base64," + base64.b64encode(image_bytes).decode()
 
 
-async def vision_compare(
-    before_bytes: bytes,
-    after_bytes: bytes,
-    context: Dict[str, Any],
-) -> Dict[str, Any]:
+def parse_json_loose(raw: str) -> Any:
+    """Parse model JSON, tolerating code fences, prose around it and trailing commas."""
+    text = (raw or "").strip()
+    text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    start, end = text.find("{"), text.rfind("}")
+    if start != -1 and end > start:
+        candidate = re.sub(r",\s*([}\]])", r"\1", text[start:end + 1])
+        return json.loads(candidate)
+    raise json.JSONDecodeError("no JSON object found", text, 0)
+
+
+async def _post(payload: Dict[str, Any], timeout: float) -> Dict[str, Any]:
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        resp = await client.post(_URL, headers=_HEADERS, json={**payload, **_provider_extras()})
+        if resp.status_code >= 400:
+            raise RuntimeError(f"LLM HTTP {resp.status_code}: {resp.text[:300]}")
+        return resp.json()
+
+
+async def vision_compare(before_bytes: bytes, after_bytes: bytes, context: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Call the DeepSeek vision model with the before/after pair and return
-    structured JSON matching the contract in SPEC §9.
+    Compare the move-in (BEFORE) and move-out (AFTER) photos of one capture slot.
+    Returns JSON matching SPEC §9. Retries once on invalid JSON.
 
     context keys: slot_label, item_type, material, age_years, tenancy_months
-
-    Raises ValueError if the model returns invalid JSON after one retry.
     """
-    from app.agent.prompts import VISION_CONTRACT
-
-    slot_label = context.get("slot_label", "")
-    item_type = context.get("item_type", "")
-    material = context.get("material", "")
-    age_years = context.get("age_years", 0)
-    tenancy_months = context.get("tenancy_months", 0)
+    from app.agent.prompts import VISION_CONTRACT, VISION_SYSTEM
 
     user_text = (
-        f"Slot: {slot_label}. Item: {item_type} ({material}), "
-        f"{age_years} years old at move-in, tenancy {tenancy_months} months.\n"
-        f"{VISION_CONTRACT}"
+        f"Slot: {context.get('slot_label', '')}. Item: {context.get('item_type', '')} "
+        f"({context.get('material', '')}), about {context.get('age_years', 0)} years old at move-in. "
+        f"Tenancy length: {context.get('tenancy_months', 0)} months.\n\n{VISION_CONTRACT}"
     )
-
     payload = {
         "model": settings.llm_vision_model,
         "messages": [
+            {"role": "system", "content": VISION_SYSTEM},
             {
                 "role": "user",
                 "content": [
@@ -82,82 +84,61 @@ async def vision_compare(
                     {"type": "image_url", "image_url": {"url": _image_data_url(after_bytes)}},
                     {"type": "text", "text": user_text},
                 ],
-            }
+            },
         ],
-        "max_tokens": 1024,
-        "response_format": {"type": "json_object"},
+        "max_tokens": 1500,
+        "temperature": 0.1,
     }
 
-    for attempt in range(2):
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            resp = await client.post(f"{_BASE}/v1/chat/completions", headers=_HEADERS, json=payload)
-            resp.raise_for_status()
-            raw = resp.json()["choices"][0]["message"]["content"]
+    last_raw = ""
+    for _ in range(2):
+        data = await _post(payload, timeout=90.0)
+        last_raw = data["choices"][0]["message"].get("content") or ""
         try:
-            return json.loads(raw)
+            result = parse_json_loose(last_raw)
+            if isinstance(result, dict):
+                result.setdefault("pair_usable", True)
+                result.setdefault("mismatch_reason", None)
+                result.setdefault("changes", [])
+                return result
         except json.JSONDecodeError:
-            if attempt == 1:
-                raise ValueError(f"DeepSeek returned invalid JSON after retry: {raw[:200]}")
-            # strip markdown fences if present
-            raw = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-            try:
-                return json.loads(raw)
-            except json.JSONDecodeError:
-                continue  # will retry once
-
-    raise ValueError("vision_compare failed to get valid JSON")
+            continue
+    raise ValueError(f"vision model returned invalid JSON twice: {last_raw[:200]}")
 
 
-async def chat_with_tools(
-    messages: List[Dict[str, Any]],
-    tools: List[Dict[str, Any]],
-    system: str,
-) -> Dict[str, Any]:
-    """
-    Call DeepSeek with tool-use (function calling) and return a normalised dict:
-    {
-        "text": str | None,
-        "tool_calls": [{"id": str, "name": str, "arguments": dict}],
-        "stop": str,  # "tool_calls" | "stop" | "length"
-    }
-    """
-    all_messages: List[Dict[str, Any]] = []
-    if system:
-        all_messages.append({"role": "system", "content": system})
-    all_messages.extend(messages)
-
+async def chat_with_tools(messages: List[Dict[str, Any]], tools: List[Dict[str, Any]], system: str) -> Dict[str, Any]:
+    """One tool-use turn. Returns the normalised response plus the raw assistant message for history."""
+    all_messages: List[Dict[str, Any]] = ([{"role": "system", "content": system}] if system else []) + messages
     payload: Dict[str, Any] = {
         "model": settings.llm_model,
         "messages": all_messages,
-        "max_tokens": 2048,
+        "max_tokens": 4000,
+        "temperature": 0.2,
     }
     if tools:
-        # DeepSeek uses OpenAI function-calling format
-        payload["tools"] = [
-            {"type": "function", "function": t} for t in tools
-        ]
+        payload["tools"] = [{"type": "function", "function": t} for t in tools]
         payload["tool_choice"] = "auto"
 
-    async with httpx.AsyncClient(timeout=120.0) as client:
-        resp = await client.post(f"{_BASE}/v1/chat/completions", headers=_HEADERS, json=payload)
-        resp.raise_for_status()
-        data = resp.json()
-
+    data = await _post(payload, timeout=120.0)
     choice = data["choices"][0]
     message = choice["message"]
-    stop_reason = choice.get("finish_reason", "stop")
 
     tool_calls = []
     for tc in message.get("tool_calls") or []:
         fn = tc.get("function", {})
         try:
-            args = json.loads(fn.get("arguments", "{}"))
+            args = parse_json_loose(fn.get("arguments") or "{}")
         except json.JSONDecodeError:
-            args = {}
+            args = {"_invalid_json": fn.get("arguments", "")}
         tool_calls.append({"id": tc.get("id", ""), "name": fn.get("name", ""), "arguments": args})
+
+    raw_message: Dict[str, Any] = {"role": "assistant", "content": message.get("content") or ""}
+    if message.get("tool_calls"):
+        raw_message["tool_calls"] = message["tool_calls"]
 
     return {
         "text": message.get("content"),
         "tool_calls": tool_calls,
-        "stop": stop_reason,
+        "stop": choice.get("finish_reason", "stop"),
+        "raw_message": raw_message,
     }

@@ -18,6 +18,7 @@ from sqlmodel import Session, select
 from app.auth import get_current_user, require_tenancy_role
 from app.db import get_session
 from app.integrity import lock_hash
+from app.util import ev
 from app.models import (
     CaptureSlot,
     Inspection,
@@ -70,11 +71,28 @@ def _build_detail(inspection: Inspection, session: Session) -> InspectionDetail:
     prop = session.get(Property, tenancy.property_id)
     rooms = session.exec(select(Room).where(Room.property_id == prop.id)).all() if prop else []
     room_ids = [r.id for r in rooms]
+    room_names = {r.id: r.name for r in rooms}
 
     all_slots = []
     for rid in room_ids:
         all_slots += session.exec(select(CaptureSlot).where(CaptureSlot.room_id == rid)).all()
     all_slots.sort(key=lambda s: s.order)
+
+    # Ghost photos: the sealed move-in photo per slot, for move_out / checkin capture
+    ghosts: dict = {}
+    if ev(inspection.type) != "move_in":
+        move_in = next(
+            (i for i in session.exec(select(Inspection).where(Inspection.tenancy_id == tenancy.id)).all()
+             if ev(i.type) == "move_in" and ev(i.status) == "locked"),
+            None,
+        )
+        if move_in:
+            for p in session.exec(select(Photo).where(Photo.inspection_id == move_in.id)).all():
+                ghosts[p.slot_id] = p.url
+
+    author_names = {u.id: (u.name or "") for u in session.exec(
+        select(User).where(User.id.in_([tenancy.owner_id, tenancy.tenant_id or ""]))  # type: ignore[attr-defined]
+    ).all()}
 
     slot_details: List[SlotDetail] = []
     for slot in all_slots:
@@ -95,7 +113,7 @@ def _build_detail(inspection: Inspection, session: Session) -> InspectionDetail:
                 id=n.id,
                 slot_id=n.slot_id,
                 author_id=n.author_id,
-                author_name="",
+                author_name=author_names.get(n.author_id, ""),
                 text=n.text,
                 created_at=n.created_at,
             )
@@ -122,6 +140,8 @@ def _build_detail(inspection: Inspection, session: Session) -> InspectionDetail:
                 photo=photo_out,
                 notes=notes_out,
                 captured=photo is not None,
+                room=room_names.get(slot.room_id, ""),
+                ghost_url=ghosts.get(slot.id),
             )
         )
 
@@ -172,6 +192,10 @@ async def upload_photo(
     _require_not_locked(inspection)
     _require_access(inspection, current_user, session)
 
+    # The slot must belong to this tenancy's property
+    if slot_id not in {sd.id for sd in _build_detail(inspection, session).slots}:
+        raise HTTPException(status_code=422, detail="Unknown slot for this property")
+
     data = await file.read()
     server_hash = hashlib.sha256(data).hexdigest()
     if server_hash != sha256.lower():
@@ -198,16 +222,18 @@ async def upload_photo(
         inspection_id=inspection_id,
         slot_id=slot_id,
         taken_by=current_user.id,
-        url=f"/api/photos/{server_hash}",
+        url=f"/api/photos/{server_hash}.jpg",
         sha256=server_hash,
         captured_at=captured_at,
         device_meta=device_meta,
     )
     session.add(photo)
 
-    # Advance status from draft if this is the first photo
-    if inspection.status == InspectionStatus.draft:
-        inspection.status = InspectionStatus.draft  # stays draft until signing
+    # A changed photo invalidates any signature already given
+    if ev(inspection.status) == "awaiting_signatures":
+        inspection.signed_by_owner_at = None
+        inspection.signed_by_tenant_at = None
+        inspection.status = InspectionStatus.draft
     session.add(inspection)
     session.commit()
     return {"id": photo.id, "sha256": server_hash, "url": photo.url}
@@ -265,6 +291,9 @@ def sign_inspection(
         raise HTTPException(status_code=409, detail=f"Missing photos for slots: {missing}")
 
     now = datetime.now(timezone.utc).isoformat()
+    tenancy = session.get(Tenancy, inspection.tenancy_id)
+    if tenancy is not None and ev(tenancy.invite_status) != "accepted":
+        raise HTTPException(status_code=409, detail="The tenant has not accepted the invite yet")
     if role == "owner":
         inspection.signed_by_owner_at = now
     else:

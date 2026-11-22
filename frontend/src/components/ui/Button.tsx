@@ -44,19 +44,24 @@ export function Button({
   ...props
 }: ButtonProps) {
   return (
-    <motion.button
-      whileTap={{ scale: 0.97 }}
+    <motion.div
+      whileTap={{ scale: disabled || loading ? 1 : 0.97 }}
       transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-      className={clsx(base, variants[variant], sizes[size], className)}
-      disabled={disabled || loading}
-      {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+      className="inline-flex w-full"
+      style={{ display: sizes[size].includes('w-full') ? 'flex' : 'inline-flex' }}
     >
-      {loading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      ) : (
-        icon && <span className="shrink-0">{icon}</span>
-      )}
-      {children}
-    </motion.button>
+      <button
+        className={clsx(base, variants[variant], sizes[size], 'w-full', className)}
+        disabled={disabled || loading}
+        {...props}
+      >
+        {loading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          icon && <span className="shrink-0">{icon}</span>
+        )}
+        {children}
+      </button>
+    </motion.div>
   )
 }

@@ -137,3 +137,12 @@ def totals(
         "in_dispute": round(disputed_capped, 2),
         "refund_due": round(deposit - agreed_capped, 2),
     }
+
+
+def replacement_basis_cost(replacement_cost: float, severity: int, dep_factor: float) -> float:
+    """
+    Fallback when the rate card has no checked rate for this change:
+    replacement_cost × penalty% × depreciation. Still deterministic and explainable,
+    and based on the owner's own replacement value, never on an AI number.
+    """
+    return round(replacement_cost * penalty(severity) / 100.0 * dep_factor, 2)

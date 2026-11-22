@@ -39,6 +39,7 @@ def seed() -> None:
         AgentRun,
         AgentStep,
         Inspection,
+        InviteStatus,
         Item,
         ItemType,
         MaintenanceCategory,
@@ -75,8 +76,8 @@ def seed() -> None:
         s.commit()
 
         # ----- Users (SPEC §14) -----
-        owner = User(id=str(uuid.uuid4()), phone="9999990001", name="Ravi (Owner)")
-        tenant = User(id=str(uuid.uuid4()), phone="9999990002", name="Meera (Tenant)")
+        owner = User(id=str(uuid.uuid4()), phone="9999990001", name="Ravi")
+        tenant = User(id=str(uuid.uuid4()), phone="9999990002", name="Meera")
         s.add(owner)
         s.add(tenant)
         s.flush()
@@ -87,6 +88,7 @@ def seed() -> None:
             owner_id=owner.id,
             address="Flat 4B, 12th Cross, Koramangala 5th Block",
             city="Bengaluru",
+            preset="Single room",
         )
         s.add(prop)
         s.flush()
@@ -175,6 +177,10 @@ def seed() -> None:
             property_id=prop.id,
             owner_id=owner.id,
             tenant_id=tenant.id,
+            tenant_phone=tenant.phone,
+            tenant_name=tenant.name,
+            invite_status=InviteStatus.accepted,
+            created_at=_now_iso(),
             start_date=start_date,
             deposit=150000.0,
             monthly_rent=15000.0,
@@ -232,7 +238,9 @@ def seed() -> None:
     print(f"   Owner  phone: 9999990001  OTP: 123456")
     print(f"   Tenant phone: 9999990002  OTP: 123456")
     print(f"   Tenancy invite code: DEMO0001")
-    print(f"   Rate card rows seeded with rate_inr=0 — fill checked rates before the demo.")
+    print(f"   Any other 10-digit number can sign up (OTP 123456).")
+    print(f"   Rate card rows have rate_inr=0: costs fall back to replacement value x severity x depreciation")
+    print(f"   until the team fills in checked rates (PUT /api/rate-card).")
 
 
 if __name__ == "__main__":

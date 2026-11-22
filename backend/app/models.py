@@ -87,6 +87,11 @@ class AgentStepKind(str, Enum):
     error = "error"
 
 
+class InviteStatus(str, Enum):
+    pending = "pending"
+    accepted = "accepted"
+
+
 class RateCardUnit(str, Enum):
     sqft = "sqft"
     piece = "piece"
@@ -100,7 +105,7 @@ class RateCardUnit(str, Enum):
 class User(SQLModel, table=True):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     phone: str = Field(index=True, unique=True)
-    name: str
+    name: str = ""
 
 
 class Property(SQLModel, table=True):
@@ -108,6 +113,7 @@ class Property(SQLModel, table=True):
     owner_id: str = Field(foreign_key="user.id")
     address: str
     city: str
+    preset: str = ""
 
 
 class Room(SQLModel, table=True):
@@ -141,6 +147,10 @@ class Tenancy(SQLModel, table=True):
     property_id: str = Field(foreign_key="property.id")
     owner_id: str = Field(foreign_key="user.id")
     tenant_id: Optional[str] = Field(default=None, foreign_key="user.id")
+    tenant_phone: str = Field(default="", index=True)  # 10-digit, normalised
+    tenant_name: str = ""  # name the owner typed when inviting
+    invite_status: InviteStatus = InviteStatus.pending
+    created_at: str = ""
     start_date: str  # ISO date string
     end_date: Optional[str] = None
     deposit: float
@@ -215,6 +225,9 @@ class Finding(SQLModel, table=True):
     reasoning: str = ""
     cited_evidence: str = "[]"  # JSON list of note/report IDs
     quantity: float = 1.0
+    rate_inr: float = 0.0
+    cost_basis: str = ""  # "rate_card" | "replacement_value" | "not_charged"
+    bbox_after: Optional[str] = None  # JSON [x, y, w, h] normalised, from the vision model
     depreciation_factor: float = 1.0
     est_cost: float = 0.0
     owner_override_cost: Optional[float] = None

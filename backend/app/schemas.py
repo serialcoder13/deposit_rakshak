@@ -55,6 +55,8 @@ class SlotDetail(BaseModel):
     photo: Optional[SlotPhotoOut]
     notes: List[SlotNoteOut]
     captured: bool
+    room: str = ""
+    ghost_url: Optional[str] = None  # move-in photo for this slot (move_out / checkin only); plain <img src>
 
 
 # ---------------------------------------------------------------------------
@@ -83,6 +85,19 @@ class CostBreakdown(BaseModel):
     est_cost: float
     owner_override_cost: Optional[float]
     owner_note: Optional[str]
+    cost_basis: str = ""          # "rate_card" | "replacement_value" | "not_charged"
+    effective_cost: float = 0.0   # owner override if set, else est_cost
+    item_age_years_at_move_out: Optional[float] = None
+    useful_life_years: Optional[float] = None
+    replacement_cost: Optional[float] = None
+
+
+class EvidenceOut(BaseModel):
+    id: str
+    kind: str        # "move_in_note" | "maintenance_report"
+    text: str
+    date: str
+    author: str = ""
 
 
 class FindingOut(BaseModel):
@@ -101,6 +116,9 @@ class FindingOut(BaseModel):
     region_description: str
     reasoning: str
     cited_evidence: List[str]  # list of note/report IDs
+    evidence: List[EvidenceOut] = []  # the cited notes/reports, resolved for display
+    bbox_after: Optional[List[float]] = None
+    room: str = ""
     cost: CostBreakdown
     status: FindingStatus
     tenant_note: Optional[str]
@@ -141,6 +159,12 @@ class MaintenanceReportOut(BaseModel):
 
 class TenancyReport(BaseModel):
     tenancy_id: str
+    my_role: str = ""
+    address: str = ""
+    owner_name: str = ""
+    tenant_name: str = ""
+    move_in_lock_hash: Optional[str] = None
+    move_out_lock_hash: Optional[str] = None
     property_score: float
     damage_pct: float
     totals: TotalsOut
